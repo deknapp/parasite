@@ -9,7 +9,6 @@
 #define CILKPROFTOOL_H_
 
 #include "Tool.h"
-
 #include <iostream>
 #include <array>
 #include <set>
@@ -32,7 +31,11 @@ class CilkProfTool : public Tool {
 public:
 
 	CilkProfTool();
+	void create(const Event* e);
 	void join(const Event* e);
+	void acquire(const Event* e);
+	void release(const Event* e);
+	void access(const Event* e);
 	void call(const Event* e);
 	void returnOfCalled(const Event* e);
 	void ~CilkProfTool();
@@ -40,7 +43,10 @@ public:
 private:
 
 	// Provides information to the CilkProf structure
-	CilkProf cilkprof;
+	CilkProf* cilkprof;
+
+	// keeps track of current thread
+	ShadowThread* currenThread;
 
 	// keeps track of current function signature for each thread
 	ThreadFunctionMap threadFunctionMap;

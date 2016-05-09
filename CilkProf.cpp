@@ -10,7 +10,7 @@
 
 CilkProf::CilkProf() {
 	
-	WorkSpanMap = WorkSpanMap();
+	workSpanMap = WorkSpanMap();
 }	
 
 CilkProf::~CilkProf() {
@@ -21,7 +21,14 @@ CilkProf::~CilkProf() {
 CilkProf::addFunctionWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation)  {
 
 	WorkSpan_ newWorkSpan = {functionSignature, work, prefix, longest-child, continuation};
-	WorkSpanMap.insert(std::pair<char*, WorkSpan> (functionSignature, newWorkSpan));
+	workSpanMap.insert(std::pair<char*, WorkSpan> (functionSignature, newWorkSpan));
+}
+
+CilkProf::changeFunctionWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation)  {
+
+	workSpanMap.erase(functionSignature);
+	WorkSpan_ newWorkSpan = {functionSignature, work, prefix, longest-child, continuation};
+	workSpanMap.insert(std::pair<char*, WorkSpan> (functionSignature, newWorkSpan));
 }
 
 

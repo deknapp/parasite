@@ -1,4 +1,4 @@
-/*
+s/*
  * CilkProf.h
  *
  *  Created on: May 8, 2016
@@ -39,8 +39,12 @@ class CilkProf {
 		const WorkSpanMap getWorkSpanMap() const;
 		CilkProf();
 		~CilkProf();
-		// add function and it's corresponding WorkSpanInfo
-		addFunctionWorkSpan();
+
+		// add a function and it's corresponding WorkSpan_ struct
+		addFunctionWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation);
+
+		// change WorkSpan for function with signature functionSignature
+		changeFunctionWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation);
 
 	private:
 
