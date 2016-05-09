@@ -44,8 +44,8 @@ void CilkProfTool::create(const Event* e) {
 	// G.l = 0
 	// G.c = 0
 
-	CallInfo *_info = e->getCallInfo();
-	this->cilkprof->addFunctionWorkSpan(_info->fnSignature, 0.0, 0.0, 0.0, 0.0);
+	CallInfo *_info = e->cilkprof.getCallInfo();
+	this->cilkprof.addFunctionWorkSpan(_info->fnSignature, 0.0, 0.0, 0.0, 0.0);
 }
 
 void CilkProfTool::join(const Event* e) {
@@ -58,23 +58,23 @@ void CilkProfTool::join(const Event* e) {
 	// 		F.p += G.c
 	// 		F.c = 0
 
-	JoinInfo *_info = e->getJoinInfo();
+	JoinInfo *_info = e->cilkprof.getJoinInfo();
 	ShadowThread* childThread = _info->childThread;
 
 	const char* F_signature = this.threadFunctionMap[currentThread.threadId];
 	const char* G_signature = this.threadFunctionMap[childThread.threadId];
 
-	G_c = getContinuation(G_signature);
+	G_c = cilkprof.getContinuation(G_signature);
 
-	this->cilkprof->addToPrefix(G_signature, G_c);
-	this->cilkprof->addToWork(F_signature, getWork(G_signature));
+	this->cilkprof.addToPrefix(G_signature, G_c);
+	this->cilkprof.addToWork(F_signature, cilkprof.getWork(G_signature));
 
-	G_p = getPrefix(G_signature);
+	G_p = cilkprof.getPrefix(G_signature);
 
-	if ((getContinuation(F_signature) + G_p) > getLongestChild(F_signature)) {
+	if ((cilkprof.getContinuation(F_signature) + G_p) > cilkprof.getLongestChild(F_signature)) {
 
 		setLongestChild(F_signature, G_p);
-		addToPrefix(F_signature, G_c);
+		cilkprof.addToPrefix(F_signature, G_c);
 		setContinuation(F_signature, 0.0);
 	}
 }
@@ -89,14 +89,14 @@ void CilkProfTool::acquire(const Event* e) {
 	// F.c = 0
 	// F.l = 0
 
-	// AcquireInfo *_info = e->getAcquireInfo();
+	// AcquireInfo *_info = e->cilkprof.getAcquireInfo();
 
 	const char* F_signature = this.threadFunctionMap[currentThread.threadId];
 
-	if (getContinuation(F_signature) > getLongestChild(F_signature))
-			addToPrefix(F_signature, getContinuation(F_signature));
+	if (cilkprof.getContinuation(F_signature) > cilkprof.getLongestChild(F_signature))
+			cilkprof.addToPrefix(F_signature, cilkprof.getContinuation(F_signature));
 	else
-			addToPrefix(F_signature, getLongestChild(F_signature));
+			cilkprof.addToPrefix(F_signature, cilkprof.getLongestChild(F_signature));
 
 	setContinuation(F_signature, 0.0);
 	setLongestChild(F_signature, 0.0);
@@ -111,7 +111,7 @@ void CilkProfTool::call(const Event* e) {
 	// G.l = 0
 	// G.c = 0
 
-	CallInfo *_info = e->getCallInfo();
+	CallInfo *_info = e->cilkprof.getCallInfo();
 	ShadowThread* childThread = _info->childThread;
 	const char* G_signature = this.threadFunctionMap[childThread.threadId];
 	this->cilkprof->setFunctionWorkSpan(_info->fnSignature, 0.0, 0.0, 0.0, 0.0);
@@ -119,13 +119,13 @@ void CilkProfTool::call(const Event* e) {
 
 void CilkProfTool::access(const Event* e) {
 
-	AccessInfo *_info = e->getAccessInfo();
+	AccessInfo *_info = e->cilkprof.getAccessInfo();
 
 }
 
 void CilkProfTool::release(const Event* e) {
 
-	ReleaseInfo *_info = e->getReleaseInfo();
+	ReleaseInfo *_info = e->cilkprof.getReleaseInfo();
 }
 
 
@@ -136,9 +136,9 @@ void CilkProfTool::returnOfCalled(const Event* e){
 	// F.w += G.w
 	// F.c += G.p
 
-	addToPrefix(G_signature, getContinuation(G_signature));
-	addToWork(F_signature, getWork(G_signature));
-	addToContinuation(F_signature, getPrefix(G_signature));
+	cilkprof.addToPrefix(G_signature, cilkprof.getContinuation(G_signature));
+	cilkprof.addToWork(F_signature, cilkprof.getWork(G_signature));
+	cilkprof.addToContinuation(F_signature, cilkprof.getPrefix(G_signature));
 }
 
 
