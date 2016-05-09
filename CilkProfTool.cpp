@@ -48,6 +48,7 @@ void CilkProfTool::create(const Event* e) {
 	this->cilkprof.addFunctionWorkSpan(_info->fnSignature, 0.0, 0.0, 0.0, 0.0);
 }
 
+
 void CilkProfTool::join(const Event* e) {
 
 	// Spawned G returns to F
@@ -79,7 +80,54 @@ void CilkProfTool::join(const Event* e) {
 	}
 }
 
+// lock acquire event 
 void CilkProfTool::acquire(const Event* e) {
+
+}
+
+
+void CilkProfTool::call(const Event* e) {
+
+	// F spawns or calls G:
+	// G.w = 0
+	// G.p = 0
+	// G.l = 0
+	// G.c = 0
+
+	CallInfo *_info = e->cilkprof.getCallInfo();
+	ShadowThread* childThread = _info->childThread;
+	const char* G_signature = this.threadFunctionMap[childThread.threadId];
+	this->cilkprof->setFunctionWorkSpan(_info->fnSignature, 0.0, 0.0, 0.0, 0.0);
+}
+
+
+// memory access event - the only related event to returns
+void CilkProfTool::access(const Event* e) {
+
+	AccessInfo *_info = e->cilkprof.getAccessInfo();
+
+}
+
+// lock release event: IMPORTANT
+void CilkProfTool::release(const Event* e) {
+
+	ReleaseInfo *_info = e->cilkprof.getReleaseInfo();
+}
+
+
+
+void CilkProfTool::returnOfCalled(const Event* e){
+
+	// Called G returns to F:
+	// G.p += G.c
+	// F.w += G.w
+	// F.c += G.p
+
+	cilkprof.addToPrefix(G_signature, cilkprof.getContinuation(G_signature));
+	cilkprof.addToWork(F_signature, cilkprof.getWork(G_signature));
+	cilkprof.addToContinuation(F_signature, cilkprof.getPrefix(G_signature));
+}
+
 
 	// F syncs
 	// if F.c > F.l
@@ -100,49 +148,6 @@ void CilkProfTool::acquire(const Event* e) {
 
 	setContinuation(F_signature, 0.0);
 	setLongestChild(F_signature, 0.0);
-}
-
-
-void CilkProfTool::call(const Event* e) {
-
-	// F spawns or calls G:
-	// G.w = 0
-	// G.p = 0
-	// G.l = 0
-	// G.c = 0
-
-	CallInfo *_info = e->cilkprof.getCallInfo();
-	ShadowThread* childThread = _info->childThread;
-	const char* G_signature = this.threadFunctionMap[childThread.threadId];
-	this->cilkprof->setFunctionWorkSpan(_info->fnSignature, 0.0, 0.0, 0.0, 0.0);
-}
-
-void CilkProfTool::access(const Event* e) {
-
-	AccessInfo *_info = e->cilkprof.getAccessInfo();
-
-}
-
-void CilkProfTool::release(const Event* e) {
-
-	ReleaseInfo *_info = e->cilkprof.getReleaseInfo();
-}
-
-
-void CilkProfTool::returnOfCalled(const Event* e){
-
-	// Called G returns to F:
-	// G.p += G.c
-	// F.w += G.w
-	// F.c += G.p
-
-	cilkprof.addToPrefix(G_signature, cilkprof.getContinuation(G_signature));
-	cilkprof.addToWork(F_signature, cilkprof.getWork(G_signature));
-	cilkprof.addToContinuation(F_signature, cilkprof.getPrefix(G_signature));
-}
-
-
-
 
 
 
