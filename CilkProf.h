@@ -11,7 +11,7 @@ s/*
 #include <vector>	
 
 // maps function signatures to their FunctionInfo_ structure
-typedef std::map<const char*, WorkSpan_> WorkSpanMap;
+typedef std::map<const char*, WorkSpan_* > WorkSpanMap;
 
 // stores the work-span variables of a function
 typedef struct WorkSpan_ {
@@ -41,10 +41,24 @@ class CilkProf {
 		~CilkProf();
 
 		// add a function and it's corresponding WorkSpan_ struct
-		addFunctionWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation);
+		addWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation);
 
 		// change WorkSpan for function with signature functionSignature
-		changeFunctionWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation);
+		changeWorkSpan(const char* functionSignature, double work_diff, double prefix_diff, double longest-child_diff, double continuation_diff);
+
+		// increment WorkSpan variables for function with signature functionSignature
+		incrementWorkSpan(const char* functionSignature, double work_diff, double prefix_diff, double longest-child_diff, 
+	 								double continuation_diff);
+
+		setWork(const char* functionSignature, double work);
+		setPrefix(const char* functionSignature, double prefix);
+		setLongestChild(const char* functionSignature, double longest_child);
+		setContinuation(const char* functionSignature, double continuation);
+
+		addToWork(const char* functionSignature, double work_diff);
+		addToPrefix(const char* functionSignature, double prefix_diff);
+		addToLongestChild(const char* functionSignature, double longest_child_diff);
+		addToContinuation(const char* functionSignature, double continuation_diff);
 
 	private:
 
