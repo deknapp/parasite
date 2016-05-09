@@ -44,11 +44,16 @@ class CilkProf {
 		addWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation);
 
 		// change WorkSpan for function with signature functionSignature
-		changeWorkSpan(const char* functionSignature, double work_diff, double prefix_diff, double longest-child_diff, double continuation_diff);
+		setWorkSpan(const char* functionSignature, double work_diff, double prefix_diff, double longest-child_diff, double continuation_diff);
 
 		// increment WorkSpan variables for function with signature functionSignature
 		incrementWorkSpan(const char* functionSignature, double work_diff, double prefix_diff, double longest-child_diff, 
 	 								double continuation_diff);
+
+		double getWork(const char* functionSignature);
+		double getPrefix(const char* functionSignature);
+		double getLongestChild(const char* functionSignature);
+		double getContinuation(const char* functionSignature);
 
 		setWork(const char* functionSignature, double work);
 		setPrefix(const char* functionSignature, double prefix);

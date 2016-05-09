@@ -18,20 +18,20 @@ CilkProf::~CilkProf() {
 	workSpanMap.clear();
 }
 
-CilkProf::CilkProf::addFunctionWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation)  {
+CilkProf::CilkProf::addWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation)  {
 
 	WorkSpan_ newWorkSpan = {functionSignature, work, prefix, longest-child, continuation};
 	workSpanMap.insert(std::pair<char*, WorkSpan> (functionSignature, &newWorkSpan));
 }
 
-CilkProf::changeFunctionWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation)  {
+CilkProf::setWorkSpan(const char* functionSignature, double work, double prefix, double longest-child, double continuation)  {
 
 	workSpanMap.erase(functionSignature);
 	WorkSpan_ newWorkSpan = {functionSignature, work, prefix, longest-child, continuation};
 	workSpanMap.insert(std::pair<char*, WorkSpan> (functionSignature, &newWorkSpan));
 }
 
-CilkProf::incrementFunctionWorkSpan(const char* functionSignature, double work_diff, double prefix_diff, double longest-child_diff, 
+CilkProf::incrementWorkSpan(const char* functionSignature, double work_diff, double prefix_diff, double longest-child_diff, 
 	 								double continuation_diff)  {
 
 	workSpanMap.erase(functionSignature);
@@ -68,10 +68,8 @@ CilkProf::setContinuation(const char* functionSignature, double cntinuation){
 
 CilkProf::addToWork(const char* functionSignature, double work_diff){
 
-
 	WorkSpan_* ws = workSpanMap[functionSignature];
 	ws->work += work_diff;
-
 }
 
 CilkProf::addToPrefix(const char* functionSignature, double prefix_diff){
@@ -92,7 +90,29 @@ CilkProf::addToContinuation(const char* functionSignature, double continuation_d
 	ws->continuation += continuation_diff;
 }
 
+double CilkProf::getWork(const char* functionSignature) {
 
+	WorkSpan_* ws = workSpanMap[functionSignature];
+	return ws->work;
+}
+
+double CilkProf::getPrefix(const char* functionSignature) {
+
+	WorkSpan_* ws = workSpanMap[functionSignature];
+	return ws->prefix;
+}
+
+double CilkProf::getLongestChild(const char* functionSignature){
+
+	WorkSpan_* ws = workSpanMap[functionSignature];
+	return ws->longest_child;
+}
+
+double CilkProf::getContinuation(const char* functionSignature){
+
+	WorkSpan_* ws = workSpanMap[functionSignature];
+	return ws->continuation;
+}
 
 
 
